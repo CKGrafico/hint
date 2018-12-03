@@ -8,8 +8,12 @@ import { NpmPackage } from 'hint/dist/src/lib/types';
 const inquirer = { prompt() { } };
 const stubBrowserslistObject = { generateBrowserslistConfig() { } };
 const resourceLoader = {
-    getCoreResources() { },
-    getInstalledResources() { }
+    getCoreResources(): [] | null {
+        return null;
+    },
+    getInstalledResources(): string[] | null {
+        return null;
+    }
 };
 const child = { spawnSync() { } };
 const fs = {
@@ -22,8 +26,12 @@ const logger = {
 };
 
 const npm = {
-    getOfficialPackages() { },
-    installPackages() { }
+    getOfficialPackages(): NpmPackage[] | null {
+        return null;
+    },
+    installPackages(): boolean {
+        return false;
+    }
 };
 
 const promisifyObject = { promisify() { } };
@@ -92,7 +100,7 @@ test.serial(`initHintrc should install the configuration package if user chooses
         maintainers: [],
         name: '@hint/configuration-recommended',
         version: '1.0.0'
-    }] as Array<NpmPackage>);
+    }] as NpmPackage[]);
 
     const stub = sandbox.stub(npm, 'installPackages').returns(true);
 
@@ -126,7 +134,7 @@ test.serial(`initHintrc shouldn't install the configuration package if user choo
         maintainers: [],
         name: '@hint/configuration-recommended',
         version: '1.0.0'
-    }] as Array<NpmPackage>);
+    }] as NpmPackage[]);
 
     const stub = sandbox.stub(npm, 'installPackages').returns(true);
 
@@ -211,7 +219,7 @@ test.serial(`if instalation of a config package fails, "initHintrc" returns true
         maintainers: [],
         name: '@hint/configuration-recommended',
         version: '1.0.0'
-    }] as Array<NpmPackage>);
+    }] as NpmPackage[]);
 
     sandbox.stub(npm, 'installPackages').returns(false);
     sandbox.stub(resourceLoader, 'getInstalledResources').returns([]);

@@ -34,7 +34,7 @@ The current supported connectors are:
   [`edge-diagnostics-adapter`][eda]. You will need to run Windows 10
   Creators Update or later to use it. This connector will only be
   installed if you are running on it. There are some known issues so
-  please check the [Edge issues](#edge-issues) section below.
+  please check the [Edge issues](#edge) section below.
 * `local`: This connector will analyze the files specified (a file
   or a directory).
 
@@ -85,7 +85,7 @@ Depending on the `connector`, other configurations may be available.
 
 <!-- markdownlint-disable MD033 -->
 
-### remote-debugging-connector configuration <a name="rdc-config"></a>
+### remote-debugging-connector configuration
 
 <!-- markdownlint-enable MD033 -->
 
@@ -105,7 +105,7 @@ The set of settings specific for them are:
 * `tabUrl (string)`: The URL to visit before the final target in case
   `useTabUrl` is `true`. `https://empty.webhint.io/` is the
   default value.
-* `flags? (Array<string>)`: Allows you to pass in additional Chrome
+* `flags? (string[])`: Allows you to pass in additional Chrome
   command line API flags. Useful if you would like to start your
   session in headless mode or with GPU disabled. Here's the full list
   of [available command line flags][cli flags].
@@ -153,14 +153,14 @@ engine.executeOn(url, {content: '{{your content}}'});
 ## Differences among connectors
 
 Connectors are expected to implement at least some basic functionality
-(see [how to develop a connector](../../contributor-guide/connectors/index.md))
+(see [how to develop a connector][how to connector])
 but expose more events or have some extra functionality. The following
 document details the known differences or issues among the official
 connectors.
 
 <!-- markdownlint-disable MD033 -->
 
-### Edge<a name="edge-issues"></a>
+### Edge
 
 <!-- markdownlint-enable MD033 -->
 
@@ -183,5 +183,6 @@ connectors.
 
 [cdp]: https://chromedevtools.github.io/devtools-protocol/
 [eda]: https://github.com/Microsoft/edge-diagnostics-adapter
+[how to connector]: ../../contributor-guide/how-to/connector.md
 [jsdom]: https://github.com/tmpvar/jsdom
 [wsl-interop]: https://msdn.microsoft.com/en-us/commandline/wsl/release_notes#build-14951

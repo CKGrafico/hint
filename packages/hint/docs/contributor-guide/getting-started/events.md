@@ -1,7 +1,31 @@
 # Events
 
 Information is shared internally via `event`s. `connector`s and `parser`s can
-create them, while `parser`s and `hint`s consume them.
+create them, while `parser`s and `hint`s consume them. To add new events via a
+`parser`, you must export a type defining the event names and expected values.
+
+```ts
+// example.ts
+import { Event, Events } from 'hint/dist/src/lib/types/events';
+...
+export type StyleParse = Event & {
+    ast: Root;
+};
+
+export type StyleEvents = Events & {
+    'parse::end::css': StyleParse;
+    'parse::start::css': Event;
+};
+
+export default class CSSParser extends Parser<StyleEvents> {
+    public constructor(engine: Engine<StyleEvents>) {
+        super(engine, 'css');
+        ...
+    }
+    ...
+}
+```
+
 The following is a list of all the events common to all `connector`s, with
 their signature, and the `interface` they implement. The exception is the
 `local connector` that needs the `HTML parser` to emit these events:
@@ -10,15 +34,16 @@ their signature, and the `interface` they implement. The exception is the
 * [`fetch::end::<resource-type>`](#fetchendresource-type)
 * [`fetch::error`](#fetcherrorresource-type)
 * [`fetch::start`](#fetchstartresource-type)
-* [`parse::css`](#parsecss)
-* [`parse::javascript`](#parsejavascript)
 * [`scan::end`](#scanend)
 * [`scan::start`](#scanstart)
 * [`traverse::down`](#traversedown)
 * [`traverse::end`](#traverseend)
 * [`traverse::start`](#traversestart)
 * [`traverse::up`](#traverseup)
-* [`can-evaluate::script`](#canevaluatescript)
+* [`can-evaluate::script`](#can-evaluatescript)
+
+For additional events emitted by specific `parser`s (e.g. `parse::end::css`),
+see [`parsers`][parsers].
 
 ## `element::<element-type>`
 
@@ -73,7 +98,7 @@ type FetchError {
     /** The error found. */
     error: any;
     /** The redirects performed for the url. */
-    hops: Array<string>
+    hops: string[];
 }
 ```
 
@@ -88,41 +113,6 @@ to start
 type FetchStart {
     /** The URL to download */
     resource: string;
-}
-```
-
-## `parse::css`
-
-Event is emitted **when** the `CSS parser` has finished parsing a
-CSS resource (a file or a `<style>` tag). Includes a [PostCSS][postcss] AST.
-See the [PostCSS `walk*` APIs][postcss-walk] for help navigating the AST.
-
-**Format:**
-
-```ts
-type StyleParse {
-    /** The root of a PostCSS AST generated from the stylesheet. */
-    ast: Root;
-    /** The raw stylesheet code. */
-    code: string;
-    /** The URL of the resource. */
-    resource: string;
-}
-```
-
-## `parse::javascript`
-
-Event is emitted **when** the `JavaScript parser` has finished parsing a
-JavaScript resource (a file or a `<script>` tag).
-
-**Format:**
-
-```ts
-type ScriptParse {
-    /** The URL of the resource. */
-    resource: string;
-    /** The source code parsed */
-    sourceCode: any;
 }
 ```
 
@@ -158,7 +148,7 @@ type ScanStart {
 a `Promise` because it will not wait for it to be resolved. If you
 need to perform an `async` operation you should combine it with
 `scan::end`. You can find more information in [how to interact with
-other services](../hints/index.md#interact-with-other-services).
+other services](../how-to/common-hint-scenarios.md#interact-with-other-services).
 
 ## `traverse::down`
 
@@ -222,7 +212,7 @@ type TraverseUp {
 }
 ```
 
-## `can-evaluate`
+## `can-evaluate::script`
 
 Event is emitted **when** the `connector` is ready to evaluate
 scripts.
@@ -237,5 +227,4 @@ type CanEvaluateScript {
 <!-- Link labels: -->
 
 [nodeName docs]: https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeName
-[postcss]: https://postcss.org/
-[postcss-walk]: https://api.postcss.org/Container.html#walk
+[parsers]: https://webhint.io/docs/user-guide/concepts/parsers/

@@ -5,8 +5,19 @@ import { Rule, Declaration } from 'postcss';
 import * as CSSParser from '../src/parser';
 import { StyleParse } from '../src/types';
 
-const postcss = { parse() { } };
-const element = { getAttribute() { }, outerHTML() { } };
+const postcss = {
+    parse() {
+        return {};
+    }
+};
+const element = {
+    getAttribute(): string | null {
+        return null;
+    },
+    outerHTML(): Promise<string> {
+        return Promise.resolve('');
+    }
+};
 
 test.beforeEach((t) => {
     t.context.element = element;
@@ -34,13 +45,15 @@ test.serial('We should provide a correct AST when parsing CSS.', async (t) => {
 
     await t.context.engine.emitAsync('element::style', { element });
 
-    const args = t.context.engine.emitAsync.args[1];
-    const data= args[1] as StyleParse;
+    t.is(t.context.engine.emitAsync.args[1][0], 'parse::start::css');
+
+    const args = t.context.engine.emitAsync.args[2];
+    const data = args[1] as StyleParse;
     const root = data.ast;
     const rule = root.first as Rule;
     const declaration = rule.first as Declaration;
 
-    t.is(args[0], 'parse::css::end');
+    t.is(args[0], 'parse::end::css');
     t.is(rule.selector, '.foo');
     t.is(declaration.prop, 'color');
     t.is(declaration.value, '#fff');

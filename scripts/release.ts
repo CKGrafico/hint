@@ -406,7 +406,7 @@ const prettyPrintCommit = async (commit: Commit): Promise<string> => {
     return `${result}.`;
 };
 
-const generateChangelogSection = async (title: string, tags: Array<string>, commits: Array<Commit>): Promise<string> => {
+const generateChangelogSection = async (title: string, tags: string[], commits: Commit[]): Promise<string> => {
     let result = '';
 
     for (const commit of commits) {
@@ -626,7 +626,7 @@ const npmRunBuildForRelease = async (ctx: TaskContext) => {
 };
 
 const npmRunTests = async (ctx: TaskContext) => {
-    await exec(`cd ${ctx.packagePath} && npm run test`);
+    await exec(`cd ${ctx.packagePath} && npm run test-release`);
 };
 
 const npmUpdateVersion = async (ctx: TaskContext) => {
@@ -671,6 +671,13 @@ const updateSnykSnapshot = async () => {
     );
 };
 
+const updateAmpValidator = async () => {
+    await downloadFile(
+        'https://cdn.ampproject.org/v0/validator.js',
+        path.normalize('packages/hint-amp-validator/src/validator')
+    );
+};
+
 const commitUpdatedPackageVersionNumberInOtherPackages = async (ctx: TaskContext) => {
 
     const semverIncrement = semver.diff(ctx.packageVersion!, ctx.newPackageVersion!);
@@ -697,9 +704,20 @@ const updatePackageVersionNumberInOtherPackages = (ctx: TaskContext) => {
     for (const pkg of packages) {
 
         const packageJSONFilePath = `${pkg}/package.json`;
-        const packageJSONFileContent = require(`../../${packageJSONFilePath}`);
-        const dependencyName = ctx.packageName === 'hint' ? ctx.packageName : `@hint/${ctx.packageName}`;
+        let packageJSONFileContent: any;
 
+        /*
+         * If the package doesn't have a valid `package.json` file,
+         * skip to the next package.
+         */
+
+        try {
+            packageJSONFileContent = require(`../../${packageJSONFilePath}`);
+        } catch {
+            continue;
+        }
+
+        const dependencyName = ctx.packageName === 'hint' ? ctx.packageName : `@hint/${ctx.packageName}`;
         let packageJSONFileHasBeenUpdated = false;
 
         [
@@ -745,6 +763,10 @@ const getTasksForRelease = (packageName: string, packageJSONFileContent: any) =>
 
     if (packageName === 'hint-performance-budget') {
         tasks.push(newTask('Update `connections.ini`', updateConnectivityIni));
+    }
+
+    if (packageName === 'hint-amp-validator') {
+        tasks.push(newTask('Update `validator.js`', updateAmpValidator));
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -922,7 +944,8 @@ const main = async () => {
         ...shell.ls('-d', 'packages/formatter-*'),
         ...shell.ls('-d', 'packages/parser-!(html)'),
         ...shell.ls('-d', 'packages/hint-*'),
-        ...shell.ls('-d', 'packages/configuration-*')
+        ...shell.ls('-d', 'packages/configuration-!(development)'),
+        'packages/configuration-development'
     ].filter((name) => {
         return !exceptions.includes(name);
     });

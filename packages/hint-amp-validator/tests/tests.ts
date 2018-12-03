@@ -9,9 +9,8 @@ const hintPath = getHintPath(__filename);
 
 const validAMPHTML = readFile(`${__dirname}/fixtures/valid-amp.html`);
 const invalidAMPHTML = readFile(`${__dirname}/fixtures/invalid-amp.html`);
-const deprecateAMP = readFile(`${__dirname}/fixtures/deprecated-amp.html`);
 
-const defaultTests: Array<HintTest> = [
+const defaultTests: HintTest[] = [
     {
         name: 'Valid AMP HTML passes',
         serverConfig: validAMPHTML
@@ -34,22 +33,9 @@ const defaultTests: Array<HintTest> = [
         ]
     },
     {
-        name: 'Deprecated AMP attribute fails',
-        serverConfig: deprecateAMP,
-        reports: [
-            { message: `The tag 'noscript > style[amp-boilerplate] - old variant' is deprecated - use 'noscript > style[amp-boilerplate]' instead. (https://github.com/ampproject/amphtml/blob/master/spec/amp-boilerplate.md)` }
-        ]
-    },
-    {
         name: `Error downloading HTML doesn't fail`,
         serverConfig: null
     }
 ];
 
-const configuredTests: Array<HintTest> = [{
-    name: 'Deprecated AMP attribute passes if errorsOnly is true',
-    serverConfig: deprecateAMP
-}];
-
 hintRunner.testHint(hintPath, defaultTests);
-hintRunner.testHint(hintPath, configuredTests, { hintOptions: { 'errors-only': true } });

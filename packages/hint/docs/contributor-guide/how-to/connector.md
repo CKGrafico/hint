@@ -74,7 +74,7 @@ export interface IConnector {
     /** Evaluates the given JavaScript `code` asynchronously in the target. */
     evaluate(code: string): Promise<any>;
     /** Finds all the nodes that match the given query. */
-    querySelectorAll(query: string): Promise<Array<IAsyncHTMLElement>>
+    querySelectorAll(query: string): Promise<IAsyncHTMLElement[]>
 }
 ```
 
@@ -108,7 +108,7 @@ export interface IAsyncHTMLElement {
 
 export interface IAsyncHTMLDocument {
     /** A wrapper around querySelectorAll that returns an Array of AsyncHTMLElements instead of a NodeList */
-    querySelectorAll(selector: string): Promise<Array<IAsyncHTMLElement>>
+    querySelectorAll(selector: string): Promise<IAsyncHTMLElement[]>
     /** The HTML of the page as returned by document.children[0].outerHTML or similar */
     pageHTML(): Promise<string>;
 }
@@ -132,11 +132,11 @@ following tests:
 
 [depth-first search]: https://en.wikipedia.org/wiki/Depth-first_search
 [iconnector interface]: https://github.com/webhintio/hint/blob/master/packages/hint/src/lib/types/connector.ts
-[jsdom]: https://github.com/tmpvar/jsdom
-[events]: ../getting-started/events/
+[jsdom]: https://github.com/jsdom/jsdom
+[events]: ../getting-started/events.md
 [events scanstart]: ../getting-started/events.md#scanstart
-[events fetchstart]: ../getting-started/events.md#fetchstart
-[events fetcherror]: ../getting-started/events.md#fetcherror
+[events fetchstart]: ../getting-started/events.md#fetchstartresource-type
+[events fetcherror]: ../getting-started/events.md#fetcherrorresource-type
 [events fetchend]: ../getting-started/events.md#fetchendresource-type
 [events traversestart]: ../getting-started/events.md#traversestart
 [events element]: ../getting-started/events.md#elementelement-type
