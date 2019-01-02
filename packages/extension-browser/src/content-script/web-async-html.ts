@@ -3,7 +3,9 @@ import {
     IAsyncHTMLDocument,
     IAsyncNamedNodeMap,
     IAsyncWindow
-} from 'hint/src/lib/types';
+} from 'hint/dist/src/lib/types';
+
+import { eval } from '../shared/globals';
 
 export class AsyncHTMLElement implements IAsyncHTMLElement {
     public ownerDocument: IAsyncHTMLDocument;
@@ -50,17 +52,11 @@ export class AsyncHTMLDocument implements IAsyncHTMLDocument {
     }
 
     public pageHTML(): Promise<string> {
-        if (this._pageHTML) {
-            return Promise.resolve(this._pageHTML);
-        }
-
-        const root = this._document.documentElement;
-
-        return Promise.resolve(root ? root.outerHTML : '');
+        return Promise.resolve(this._pageHTML);
     }
 
     public setPageHTML(pageHTML: string) {
-        this._pageHTML = pageHTML;
+        this._pageHTML = pageHTML || /* istanbul ignore next */ '';
     }
 
     public querySelectorAll(selector: string): Promise<IAsyncHTMLElement[]> {

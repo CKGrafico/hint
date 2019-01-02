@@ -63,6 +63,10 @@
               "description": "The character set of the input files.",
               "type": "string"
             },
+            "composite": {
+              "description": "Enables building for project references.",
+              "type": "boolean"
+            },
             "declaration": {
               "description": "Generates corresponding d.ts files.",
               "type": "boolean"
@@ -78,6 +82,10 @@
             "emitBOM": {
               "description": "Emit a UTF-8 Byte Order Mark (BOM) in the beginning of output files.",
               "type": "boolean"
+            },
+            "emitDeclarationOnly": {
+                "description": "Only emit '.d.ts' declaration files.",
+                "type": "boolean"
             },
             "inlineSourceMap": {
               "description": "Emit a single file with source maps instead of having a separate file.",
@@ -107,11 +115,11 @@
               "description": "Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015' or 'esnext'.",
               "type": "string",
               "anyOf": [
-                  {
-                      "enum": [ "commonjs", "amd", "umd", "system", "es6", "es2015", "esnext", "none" ]
-                  }, {
-                      "pattern": "^([cC][oO][mM][mM][oO][nN][jJ][sS]|[aAuU][mM][dD]|[sS][yY][sS][tT][eE][mM]|[eE][sS]([356]|(201[567])|[nN][eE][xX][tT])|[nN][oO][nN][eE])$"
-                  }
+                {
+                  "enum": [ "commonjs", "amd", "umd", "system", "es6", "es2015", "esnext", "none" ]
+                }, {
+                  "pattern": "^([cC][oO][mM][mM][oO][nN][jJ][sS]|[aAuU][mM][dD]|[sS][yY][sS][tT][eE][mM]|[eE][sS]([356]|(201[567])|[nN][eE][xX][tT])|[nN][oO][nN][eE])$"
+                }
               ]
             },
             "newLine": {
@@ -192,6 +200,10 @@
               "description": "Do not resolve symlinks to their real path; treat a symlinked file like a real one.",
               "type": "boolean"
             },
+            "preserveWatchOutput": {
+              "description": "Keep outdated console output in watch mode instead of clearing the screen.",
+              "type": "boolean"
+            },
             "pretty": {
               "description": "Stylize errors and messages using color and context (experimental).",
               "type": "boolean"
@@ -229,7 +241,7 @@
               "type": "boolean"
             },
             "target": {
-              "description": "Specify ECMAScript target version. Permitted values are 'es3', 'es5', 'es6', 'es2015', 'es2016', 'es2017' or 'esnext'.",
+              "description": "Specify ECMAScript target version. Permitted values are 'es3', 'es5', 'es6', 'es2015', 'es2016', 'es2017', 'es2018' or 'esnext'.",
               "type": "string",
               "default": "es3",
               "anyOf": [
@@ -241,10 +253,11 @@
                     "es2015",
                     "es2016",
                     "es2017",
+                    "es2018",
                     "esnext"
                   ]
                 }, {
-                  "pattern": "^([eE][sS]([356]|(201[567])|[nN][eE][xX][tT]))$"
+                  "pattern": "^([eE][sS]([356]|(201[5678])|[nN][eE][xX][tT]))$"
                 }
               ]
             },
@@ -353,6 +366,10 @@
               "description": "Allow javascript files to be compiled.",
               "type": "boolean"
             },
+            "noErrorTruncation": {
+              "description": "Do not truncate error messages.",
+              "type": "boolean"
+            },
             "allowSyntheticDefaultImports": {
               "description": "Allow default imports from modules with no default export. This does not affect code emit, just typechecking.",
               "type": "boolean"
@@ -365,13 +382,22 @@
               "description": "Enable to list all emitted files. Requires TypeScript version 2.0 or later.",
               "type": "boolean"
             },
+            "disableSizeLimit": {
+              "description": "Disable size limit for JavaScript project. Requires TypeScript version 2.0 or later.",
+              "type": "boolean",
+              "default": false
+            },
             "lib": {
               "description": "Specify library file to be included in the compilation. Requires TypeScript version 2.0 or later.",
               "type": "array",
               "items": {
                 "type": "string",
-                "enum": [ "es5", "es6", "es2015", "es7", "es2016", "es2017", "es2018", "esnext", "dom", "dom.iterable", "webworker", "scripthost", "es2015.core", "es2015.collection", "es2015.generator", "es2015.iterable",
-                        "es2015.promise", "es2015.proxy", "es2015.reflect", "es2015.symbol", "es2015.symbol.wellknown", "es2016.array.include", "es2017.object", "es2017.sharedmemory", "es2017.typedarrays", "esnext.array", "esnext.asynciterable", "esnext.promise"]
+                "enum": [ "es5", "es6", "es2015", "es7", "es2016", "es2017", "es2018", "esnext", "dom", "dom.iterable", "webworker", "scripthost",
+                          "es2015.core", "es2015.collection", "es2015.generator", "es2015.iterable", "es2015.promise", "es2015.proxy", "es2015.reflect", "es2015.symbol", "es2015.symbol.wellknown",
+                          "es2016.array.include",
+                          "es2017.object", "es2017.intl", "es2017.sharedmemory", "es2017.string", "es2017.typedarrays",
+                          "es2018.intl", "es2018.promise", "es2018.regexp",
+                          "esnext.asynciterable", "esnext.array", "esnext.intl", "esnext.symbol"]
               }
             },
             "strictNullChecks": {
@@ -400,6 +426,10 @@
               "description": "Enable all strict type checking options. Requires TypeScript version 2.3 or later.",
               "type": "boolean"
             },
+            "strictBindCallApply": {
+              "description": "Enable stricter checking of of the `bind`, `call`, and `apply` methods on functions.",
+              "type": "boolean"
+            },
             "downlevelIteration": {
               "description": "Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. Requires TypeScript version 2.3 or later.",
               "type": "boolean"
@@ -409,15 +439,27 @@
               "type": "boolean"
             },
             "strictFunctionTypes": {
-                "description": "Disable bivariant parameter checking for function types. Requires TypeScript version 2.6 or later.",
-                "type": "boolean"
+              "description": "Disable bivariant parameter checking for function types. Requires TypeScript version 2.6 or later.",
+              "type": "boolean"
             },
             "strictPropertyInitialization": {
-                "description": "Ensure non-undefined class properties are initialized in the constructor. Requires TypeScript version 2.7 or later.",
-                "type": "boolean"
+              "description": "Ensure non-undefined class properties are initialized in the constructor. Requires TypeScript version 2.7 or later.",
+              "type": "boolean"
             },
             "esModuleInterop": {
-                "description": "Emit '__importStar' and '__importDefault' helpers for runtime babel ecosystem compatibility and enable '--allowSyntheticDefaultImports' for typesystem compatibility. Requires TypeScript version 2.7 or later.",
+              "description": "Emit '__importStar' and '__importDefault' helpers for runtime babel ecosystem compatibility and enable '--allowSyntheticDefaultImports' for typesystem compatibility. Requires TypeScript version 2.7 or later.",
+              "type": "boolean"
+            },
+            "keyofStringsOnly": {
+                "description": "Resolve 'keyof' to string valued property names only (no numbers or symbols). Requires TypeScript version 2.9 or later.",
+                "type": "boolean"
+            },
+            "declarationMap": {
+                "description": "Generates a sourcemap for each corresponding '.d.ts' file. Requires TypeScript version 2.9 or later.",
+                "type": "boolean"
+            },
+            "resolveJsonModule": {
+                "description": "Include modules imported with '.json' extension. Requires TypeScript version 2.9 or later.",
                 "type": "boolean"
             }
           }
@@ -453,9 +495,26 @@
           }
         }
       }
+    },
+    "referencesDefinition": {
+      "properties": {
+        "references": {
+          "type": "array",
+          "description": "Referenced projects. Requires TypeScript version 3.0 or later.",
+          "items": {
+            "type": "object",
+            "description": "Project reference.",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path to referenced tsconfig or to folder containing tsconfig."
+              }
+            }
+          }
+        }
+      }
     }
   },
-
   "type": "object",
   "allOf": [
     { "$ref": "#/definitions/compilerOptionsDefinition" },
@@ -466,7 +525,8 @@
       "anyOf": [
         { "$ref": "#/definitions/filesDefinition" },
         { "$ref": "#/definitions/excludeDefinition" },
-        { "$ref": "#/definitions/includeDefinition" }
+        { "$ref": "#/definitions/includeDefinition" },
+        { "$ref": "#/definitions/referencesDefinition" }
       ]
     }
   ]

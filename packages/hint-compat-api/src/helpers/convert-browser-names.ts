@@ -1,4 +1,9 @@
-import { BrowserSupportCollection, BrowserSupportCollectionRaw } from '../types';
+/**
+ * @fileoverview Helper that convert browser names from Browserlist to MDN Api.
+ */
+
+import { BrowserSupportCollection } from '../types';
+const { browsers: mdnBrowsers } = require('mdn-browser-compat-data');
 
 type BrowsersDictionary = {
     [key: string]: string;
@@ -20,9 +25,8 @@ const browserNamesToMDN: BrowsersDictionary = {
     and_ff: 'firefox_android',
     firefoxandroid: 'firefox_android',
     ie: 'ie',
-    iOS: 'iOS',
     ios_saf: 'safari_ios',
-    node: 'node',
+    node: 'nodejs',
     opera: 'opera',
     qqandroid: 'qq_android',
     safari: 'safari',
@@ -31,8 +35,22 @@ const browserNamesToMDN: BrowsersDictionary = {
 };
 /* eslint-enable */
 
-export const convertBrowserSupportCollectionToMDN = (browserCollection: BrowserSupportCollectionRaw): BrowserSupportCollection => {
-    const mdnCollection = {} as BrowserSupportCollection;
+const testBrowsersDictionary = (): void => {
+    const flatMdnBrowsers = Object.keys(mdnBrowsers);
+
+    Object.entries(browserNamesToMDN).forEach(([browserListName, mdnBrowserName]) => {
+        if (!flatMdnBrowsers.find((flatMdnBrowser) => {
+            return flatMdnBrowser === mdnBrowserName;
+        })) {
+            throw new Error('Browserslist and MDN Browsers are not compatible.');
+        }
+    });
+};
+
+export const convertBrowserSupportCollectionToMDN = (browserCollection: BrowserSupportCollection): BrowserSupportCollection => {
+    const mdnCollection: BrowserSupportCollection = {};
+
+    testBrowsersDictionary();
 
     Object.entries(browserCollection).forEach(([browserName, browserVersions]) => {
         const mdnName = browserNamesToMDN[browserName.toLowerCase()];
@@ -43,11 +61,7 @@ export const convertBrowserSupportCollectionToMDN = (browserCollection: BrowserS
 
         mdnCollection[mdnName] = mdnCollection[mdnName] || [];
 
-        const mdnVersions = browserVersions.map((x: string) => {
-            return Number(x);
-        });
-
-        mdnCollection[mdnName] = ([...mdnCollection[mdnName], ...mdnVersions]).sort((a, b) => {
+        mdnCollection[mdnName] = ([...mdnCollection[mdnName], ...browserVersions]).sort((a, b) => {
             return a - b;
         });
     });

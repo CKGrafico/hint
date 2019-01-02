@@ -1,16 +1,16 @@
 require('util.promisify/shim')(); // Needed for `promisify` to work when bundled.
 
 import browserslist = require('browserslist'); // `require` used because `browserslist` exports a function.
+import { URL } from 'url';
 
 import { Engine } from 'hint';
 import { Configuration } from 'hint/dist/src/lib/config';
 import { HintResources, HintsConfigObject, IHintConstructor } from 'hint/dist/src/lib/types';
 
-import CSSParser from '@hint/parser-css';
 import JavaScriptParser from '@hint/parser-javascript';
 import ManifestParser from '@hint/parser-manifest';
 
-import browser from '../shared/browser';
+import { browser, location } from '../shared/globals';
 import { Config, Events } from '../shared/types';
 
 import WebExtensionConnector from './connector';
@@ -74,7 +74,7 @@ const main = async (userConfig: Config) => {
         hints: hintsConfig,
         hintsTimeout: 10000,
         ignoredUrls,
-        parsers: ['css', 'javascript', 'manifest']
+        parsers: ['javascript', 'manifest']
     };
 
     const resources: HintResources = {
@@ -84,7 +84,6 @@ const main = async (userConfig: Config) => {
         incompatible: [],
         missing: [],
         parsers: [
-            CSSParser as any,
             JavaScriptParser as any,
             ManifestParser as any
         ]
